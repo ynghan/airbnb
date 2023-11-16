@@ -5,6 +5,7 @@ import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
 public class UppercaseSnakePhysicalNamingStrategy implements PhysicalNamingStrategy {
+
     @Override
     public Identifier toPhysicalCatalogName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
         if (identifier == null) {
@@ -44,5 +45,4 @@ public class UppercaseSnakePhysicalNamingStrategy implements PhysicalNamingStrat
                 .toUpperCase();
         return Identifier.toIdentifier(newName);
     }
-
 }
