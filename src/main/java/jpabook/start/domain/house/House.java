@@ -6,21 +6,22 @@ import jpabook.start.domain.user.Host;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
 public class House {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "house_id")
   private Long id;
 
   @OneToOne(fetch = FetchType.LAZY)
   private Host host;
 
-  @OneToMany(mappedBy = "house")
+  @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
   private List<Amenity> amenity = new ArrayList<>();
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private DateHouse dateHouse;
+  @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
+  private List<DateHouse> dateHouse = new ArrayList<>();
 
   private String name;
 

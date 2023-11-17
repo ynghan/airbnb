@@ -1,5 +1,6 @@
 package jpabook.start;
 
+import jpabook.start.domain.user.Guest;
 import jpabook.start.domain.user.Host;
 
 import javax.persistence.*;
@@ -17,7 +18,10 @@ public class JpaMain {
         try {
             tx.begin();
 
-            System.out.println("dkdk");
+            Host host = new Host();
+            Guest guest = new Guest();
+            em.persist(host);
+            em.persist(guest);
 
             tx.commit();
         } catch(Exception e) {
