@@ -1,5 +1,5 @@
 package jpabook.start.domain.sale;
 
-public enum SaleState {
+public enum SaleStatus {
   FIX, QUANTITY
 }

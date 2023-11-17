@@ -1,5 +1,6 @@
 package jpabook.start;
 
+import jpabook.start.domain.sale.Sale;
 import jpabook.start.domain.user.Guest;
 import jpabook.start.domain.user.Host;
 
@@ -19,9 +20,10 @@ public class JpaMain {
             tx.begin();
 
             Host host = new Host();
-            Guest guest = new Guest();
             em.persist(host);
-            em.persist(guest);
+
+            Sale sale = new Sale();
+
 
             tx.commit();
         } catch(Exception e) {

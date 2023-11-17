@@ -1,5 +1,5 @@
 package jpabook.start.domain.amentity;
 
-public enum AmenityState {
+public enum AmenityStatus {
   BASIC, SAFTY, ACCESSIBLE, SEARCH
 }
