@@ -6,13 +6,18 @@ import lombok.RequiredArgsConstructor;
 import javax.persistence.EntityManager;
 
 
+
 @RequiredArgsConstructor
 public class GuestRepository {
 
-  private final EntityManager em;
+  public GuestRepository(EntityManager em) {
+    this.em = em;
+  }
+  private EntityManager em;
 
   public void save(Guest guest) {
     em.persist(guest);
   }
+
 
 }

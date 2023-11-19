@@ -1,6 +1,6 @@
 package jpabook.start.domain.house;
 
-public enum HouseStatus {
+public enum HouseType {
 
   ENTIRESPACE, PARTSPACE
 }

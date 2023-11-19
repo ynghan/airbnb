@@ -28,4 +28,9 @@ public class Guest {
 
   private int age;
 
+  public Guest(String name, int age) {
+    this.name = name;
+    this.age = age;
+  }
+
 }

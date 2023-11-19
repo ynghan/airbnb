@@ -1,13 +1,14 @@
 package jpabook.start.domain.house;
 
 import jpabook.start.domain.booking.Book;
-import jpabook.start.domain.day.Date;
-import jpabook.start.domain.sale.Sale;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 @Entity
 @Getter
 @Setter
@@ -18,6 +19,17 @@ public class DateHouse {
   @Column(name = "DATEHOUSE_ID")
   private Long id;
 
+  private Month houseMonth;
+
+  private int houseDate;
+
+  private double dateCharge;
+
+  private ReservationState reservationState;
+
+  @Enumerated(EnumType.STRING)
+  private SaleStatus status;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "BOOK_ID")
   private Book book;
@@ -26,13 +38,14 @@ public class DateHouse {
   @JoinColumn(name = "HOUSE_ID")
   private House house;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "DATE_ID")
-  private Date date;
+  public DateHouse(House house, Month monthValue, int date) {
+    this.status = SaleStatus.QUANTITY;
+    this.houseMonth = monthValue;
+    this.houseDate = date;
+    this.dateCharge = house.getCharge();
+    this.reservationState = ReservationState.UNRESERVE;
+  }
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "SALE_ID")
-  private Sale sale;
 
   //== 연관관계 메서드 ==//
   public void setBook(Book book) {
@@ -41,21 +54,8 @@ public class DateHouse {
   }
   public void setHouse(House house) {
     this.house = house;
-    house.getDateHouses().add(this);
-  }
-  public void setDates(Date date) {
-    this.date = date;
-    date.setDateHouse(this);
-  }
-  public void setSale(Sale sale) {
-    this.sale = sale;
-    sale.setDateHouse(this);
   }
 
-  //==생성 메서드==//
-  public DateHouse(House house, Date date, Sale sale) {
-    this.house = house;
-    this.date = date;
-    this.sale = sale;
-  }
+
+
 }

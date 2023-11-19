@@ -1,12 +1,10 @@
 package jpabook.start.domain.user;
 
 import jpabook.start.domain.house.House;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+
 @Entity
 @Getter
 @Setter
@@ -28,5 +26,11 @@ public class Host {
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "HOUSE_ID")
   private House house;
+
+
+  public void registHouse(House house) {
+    this.house = house;
+    house.setHost(this);
+  }
 
 }
