@@ -23,7 +23,7 @@ public class JpaMain {
 
             new InitDb(em);
 
-            GuestService guestService = new GuestService(em);
+//            GuestService guestService = new GuestService(em);
 
             //게스트는 조건에 맞는 숙소를 조회할 수 있다.
 

@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.Month;
 
 @Entity
 @Getter
@@ -19,7 +17,7 @@ public class DateHouse {
   @Column(name = "DATEHOUSE_ID")
   private Long id;
 
-  private Month houseMonth;
+  private int houseMonth;
 
   private int houseDate;
 
@@ -41,7 +39,8 @@ public class DateHouse {
   @JoinColumn(name = "HOUSE_ID")
   private House house;
 
-  public DateHouse(House house, Month monthValue, int date) {
+  public DateHouse(House house, int monthValue, int date) {
+    this.house = house;
     this.houseMonth = monthValue;
     this.houseDate = date;
     this.roomCount = house.getRoomCount();
@@ -55,10 +54,5 @@ public class DateHouse {
     this.book = book;
     book.getDateHouses().add(this);
   }
-  public void setHouse(House house) {
-    this.house = house;
-  }
-
-
 
 }

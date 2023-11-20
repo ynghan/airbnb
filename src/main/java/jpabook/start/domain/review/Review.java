@@ -22,6 +22,8 @@ public class Review {
   @Column(name = "REVIEW_ID")
   private Long id;
 
+  private String comments;
+
   @Enumerated(EnumType.STRING)
   private StarScore starScore;
 
@@ -29,6 +31,11 @@ public class Review {
   @JoinColumn(name = "BOOK_ID")
   private Book book;
 
-  private String contents;
+
+  public Review(Book book, StarScore starScore, String comments) {
+    this.book = book;
+    this.starScore = starScore;
+    this.comments = comments;
+  }
 
 }

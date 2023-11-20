@@ -14,11 +14,13 @@ class HouseTest {
 
   @Test
   void printLocalDateTime() {
-//    LocalDateTime registerDate = LocalDateTime.now();
-//    Month month = registerDate.getMonth();
-//    int year = registerDate.getYear();
-//    System.out.println(year);
-//    System.out.println(Month.of(12));
+
+
+    LocalDateTime registerDate = LocalDateTime.now();
+    Month month = registerDate.getMonth();
+    int year = registerDate.getYear();
+    System.out.println(year);
+    System.out.println(Month.of(12));
 //
 
     LocalDateTime now = LocalDateTime.now();

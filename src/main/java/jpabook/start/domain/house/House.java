@@ -10,10 +10,11 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -68,11 +69,6 @@ public class House {
     dateHouse.setHouse(this);
   }
 
-  public void setHost(Host host) {
-    this.host = host;
-    host.setHouse(this);
-  }
-
   //== 생성 메서드 ==//
   public House(int charge, Address address, String name, int capacity, int roomCount, int bathroomCount, HouseType houseType, String introduction) {
 
@@ -88,16 +84,16 @@ public class House {
     this.introduction = introduction;
 
     //현재 일 ~ 31일 DateHouse 클래스 생성
-    Month currentMonth = registerDate.getMonth();
-    int currMonthInteger = currentMonth.getValue();
-    int nextMonthInteger = (currMonthInteger + 1) % 12;
+    int currentMonth = registerDate.getMonthValue();
+//    int currMonthInteger = currentMonth.getValue();
+//    int nextMonthInteger = (currMonthInteger + 1) % 12;
 //    Month nextMonth = Month.of(nextMonthInteger);
     createDateHouse(currentMonth);
 //    createDateHouse(nextMonth);
 
   }
   //House 생성 시점에 모든 날짜에 대한 DateHouse를 생성한다.
-  public void createDateHouse(Month monthValue) {
+  public void createDateHouse(int monthValue) {
     //월 저장
     YearMonth yearMonth = YearMonth.of(2023, monthValue);
     int lengthOfMonth = yearMonth.lengthOfMonth();
@@ -106,7 +102,6 @@ public class House {
     //현재 '일'부터 현재 '달'의 마지막 날까지 DateHouse 생성
     for(int i = dayOfMonth; i <= lengthOfMonth; i++) {
       DateHouse dateHouse = new DateHouse(this, monthValue, i);
-      dateHouse.setHouse(this);
       this.dateHouses.add(dateHouse);
     }
   }
@@ -122,19 +117,41 @@ public class House {
     return returnDateHouse;
   }
 
-  public List<Review> getAllReview() {
+  public Set<Review> getAllReview() {
     List<DateHouse> dateHouses = this.getDateHouses();
-    List<Review> reviews = new ArrayList<>();
+    Set<Review> reviews = new HashSet<>();
     for (DateHouse dateHouse : dateHouses) {
       Book book = dateHouse.getBook();
       if (book != null) {
         Review review = book.getReview();
-
         if (review != null) {
           reviews.add(review);
         }
       }
     }
+
     return reviews;
   }
+
+  public void setStarPoint() {
+    List<DateHouse> dateHouses = this.getDateHouses();
+    Set<Review> reviews = new HashSet<>();
+    for (DateHouse dateHouse : dateHouses) {
+      Book book = dateHouse.getBook();
+      if (book != null) {
+        Review review = book.getReview();
+        if (review != null) {
+          reviews.add(review);
+        }
+      }
+    }
+    double total = 0;
+    for (Review review : reviews) {
+      total += review.getStarScore().getStarPoint();
+    }
+    total /= reviews.size();
+    this.setStarPoint(total);
+  }
+
+
 }

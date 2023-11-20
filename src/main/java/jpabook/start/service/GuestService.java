@@ -7,6 +7,7 @@ import jpabook.start.domain.house.House;
 import jpabook.start.domain.house.HouseType;
 import jpabook.start.domain.house.ReservationState;
 import jpabook.start.domain.review.Review;
+import jpabook.start.domain.review.StarScore;
 import jpabook.start.domain.user.Guest;
 import jpabook.start.repository.HouseRepository;
 import jpabook.start.repository.userRepository.GuestRepository;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
 
+import static jpabook.start.domain.booking.BookStatus.COMPLETE;
 import static jpabook.start.domain.house.HouseType.*;
 import static jpabook.start.domain.house.HouseType.ENTIRESPACE;
 
@@ -26,11 +28,9 @@ import static jpabook.start.domain.house.HouseType.ENTIRESPACE;
 public class GuestService {
 
   private HouseRepository houseRepository;
-  private GuestRepository guestRepository;
 
   public GuestService(EntityManager em) {
     houseRepository = new HouseRepository(em);
-    guestRepository = new GuestRepository(em);
   }
 
   /**
@@ -38,7 +38,6 @@ public class GuestService {
    * findHouse(checkInDate, checkOutDate, 5, houseType)
    * findHouse(checkInDate, checkOutDate, null, null)
    * findHouse(checkInDate, checkOutDate, 7, null)
-   *
    * 검색 조건에 맞는 숙소는 (숙소 유형, 이름, 총가격, 평균 별점) 정보를 보여준다.
    */
 
@@ -79,11 +78,7 @@ public class GuestService {
     for (House findHouse : findHouses) {
       if(findHouse.getCapacity() >= capacity) {
         returnHouses.add(findHouse);
-        List<DateHouse> dateHouses = findHouse.getDateHouses(checkIn, checkOut);
-        double totalHouseCharge = 0;
-        for (DateHouse dateHouse : dateHouses) {
-          totalHouseCharge += dateHouse.getDateCharge();
-        }
+        double totalHouseCharge = getTotalPrice(findHouse, checkIn, checkOut);
         System.out.println("---------------------------------------------------------------");
         System.out.println(" (1) 이름 - " + findHouse.getName()
                 + "\n (2) 유형 - " + findHouse.getHouseType().getSpace()
@@ -94,22 +89,20 @@ public class GuestService {
     return returnHouses;
   }
 
+
+
   public List<House> findHouse(int checkIn, int checkOut) {
     List<House> findHouses = houseRepository.findByDateRange(checkIn, checkOut);
     System.out.println("                          [ 검색 조건 ]                          ");
     System.out.println(" 1. " + checkIn + "일 부터 " + checkOut + "일 까지 예약 가능 ");
     System.out.println("                          ( 검색 결과 )                          ");
     for (House findHouse : findHouses) {
-      List<DateHouse> dateHouses = findHouse.getDateHouses(checkIn, checkOut);
-      double totalHouseCharge = 0;
-      for (DateHouse dateHouse : dateHouses) {
-        totalHouseCharge += dateHouse.getDateCharge();
-      }
+      double totalHouseCharge = getTotalPrice(findHouse, checkIn, checkOut);
 
       System.out.println("---------------------------------------------------------------");
       System.out.println(" (1) 이름 - " + findHouse.getName()
               + "\n (2) 유형 - " + findHouse.getHouseType().getSpace()
-              + "\n (3) 가격 - " + Math.round(totalHouseCharge) + "원");
+              + "\n (3) 가격 - " + (int)(totalHouseCharge) + "원");
       System.out.println("---------------------------------------------------------------");
     }
     return findHouses;
@@ -123,11 +116,7 @@ public class GuestService {
     // 각 House 별로 총 요금을 계산하여 Map에 저장
     Map<House, Double> houseCharges = new HashMap<>();
     for (House findHouse : houses) {
-      List<DateHouse> dateHouses = findHouse.getDateHouses(checkIn, checkOut);
-      double totalHouseCharge = 0;
-      for (DateHouse dateHouse : dateHouses) {
-        totalHouseCharge += dateHouse.getDateCharge();
-      }
+      double totalHouseCharge = getTotalPrice(findHouse, checkIn, checkOut);
       houseCharges.put(findHouse, totalHouseCharge);
     }
 
@@ -175,8 +164,8 @@ public class GuestService {
   //==================================================================================================================
 
   public House getDetailHouse(String houseName) {
-
-    System.out.println("=========[" + houseName + " 상세 정보]===========");
+    System.out.println();
+    System.out.println("======== [" + houseName + " 상세 정보] ========");
 
     House house = houseRepository.findByName(houseName);
 
@@ -186,8 +175,8 @@ public class GuestService {
     System.out.println("화장실 개수 : " + house.getBathroomCount());
     System.out.println("소개 : " + house.getIntroduction());
     System.out.println("시설 : " + house.getAmenitys().toString());
-    System.out.println("주소 : " + house.getAddress().toString());
-
+    System.out.println("주소 : " + house.getAddress().getCity() + " " + house.getAddress().getStreet() + " " + house.getAddress().getZipcode());
+    System.out.println();
 
 
 
@@ -197,14 +186,14 @@ public class GuestService {
 
     //2. 숙소의 모든 별점과 리뷰
     System.out.println("별점 : " + house.getStarPoint());
-    List<Review> allReview = house.getAllReview();
-    System.out.println("<<           리뷰 내용            >>");
+    Set<Review> allReview = house.getAllReview();
+    System.out.println("----------- [리뷰 내용] -----------");
     if(allReview.isEmpty()) {
       System.out.println("등록된 리뷰가 없습니다.");
+      System.out.println();
     } else {
-      for (int i = 0; i < allReview.size(); i++) {
-        Review review = allReview.get(i);
-        System.out.println(i + "." + review.getContents());
+      for (Review review : allReview) {
+        System.out.println(review.getComments());
       }
     }
 
@@ -223,7 +212,7 @@ public class GuestService {
       char[] calender = new char[lengthOfMonth+1];
       Arrays.fill(calender, '-');
 
-      System.out.println("<11월 예약 현황>");
+      System.out.println("-------- [11월 예약 현황] ---------");
       List<DateHouse> dateHouses = house.getDateHouses();
       for (DateHouse dateHouse : dateHouses) {
         if(dateHouse.getHouseDate() >= 1 && dateHouse.getHouseDate() <= lengthOfMonth) {
@@ -253,6 +242,8 @@ public class GuestService {
         // 2 --> 목요일
         // 1 --> 수요일
       }
+      System.out.println();
+      System.out.println();
     }
     /**
      * 개인실 숙소의 경우
@@ -263,7 +254,7 @@ public class GuestService {
       String[] calender = new String[lengthOfMonth+1];
       Arrays.fill(calender, "-");
 
-      System.out.println("<11월 예약 현황>");
+      System.out.println("-------- [11월 예약 현황] ---------");
       List<DateHouse> dateHouses = house.getDateHouses();
       for (DateHouse dateHouse : dateHouses) {
         if(dateHouse.getHouseDate() >= 1 && dateHouse.getHouseDate() <= lengthOfMonth) {
@@ -308,13 +299,31 @@ public class GuestService {
   public Book bookHouse(Guest guest, House house, int capacity, int checkinDate, int checkoutDate) {
 
     Book book = new Book();
+
+    book.setStatus(BookStatus.RESERVATION);
+    //예약한 게스트
+    book.setGuest(guest);
+    //수용 인원
     book.setPeopleNum(capacity);
+    //숙소 이름
+    book.setHouseName(house.getName());
+    //숙소 유형
     book.setHouseType(house.getHouseType());
-    book.setReserveInfo(house.getName() + ": " + checkinDate + "일부터 " + checkoutDate + "일까지" + capacity + "명 예약");
+    //숙소 가격
+    double totalPrice = getTotalPrice(house, checkinDate, checkoutDate);
+    book.setPrice(totalPrice);
+    //체크인 날짜
+    LocalDateTime checkIn = LocalDateTime.of(2023, 11, checkinDate, 16, 0);
+    book.setCheckInDate(checkIn);
+    //체크아웃 날짜
+    LocalDateTime checkOut = LocalDateTime.of(2023, 11, checkinDate, 11, 0);
+    book.setCheckOutDate(checkOut);
+    //예약 정보
+    book.setReserveInfo(house.getName() + ": " + checkinDate + "일부터 " + checkoutDate + "일까지 " + capacity + "명 예약");
+
     //공간전체
     if(house.getHouseType() == ENTIRESPACE) {
       if(house.getCapacity() >= capacity) {
-        guest.getBooks().add(book);
         List<DateHouse> dateHouses = house.getDateHouses(checkinDate, checkoutDate);
         for (DateHouse dateHouse : dateHouses) {
           book.getDateHouses().add(dateHouse);
@@ -325,7 +334,6 @@ public class GuestService {
     //개인실
     else if(house.getHouseType() == PARTSPACE) {
       if(house.getCapacity() >= capacity) {
-        guest.getBooks().add(book);
         List<DateHouse> dateHouses = house.getDateHouses(checkinDate, checkoutDate);
         for (DateHouse dateHouse : dateHouses) {
           if(dateHouse.getRoomCount() >= capacity) {
@@ -336,8 +344,7 @@ public class GuestService {
         }
       }
     }
-    System.out.println();
-    System.out.println("[예약 완료 메시지]");
+    System.out.println("========= [예약 완료 메시지] =========");
     System.out.println(book.getReserveInfo());
     System.out.println();
 
@@ -363,12 +370,142 @@ public class GuestService {
       }
     }
     book.setStatus(BookStatus.CANCEL);
-    System.out.println(book.getReserveInfo() + "취소합니다.");
+    System.out.println("======== [예약 취소 메시지] ========");
+    System.out.println(book.getReserveInfo() + " 취소");
+    System.out.println();
   }
 
   public void reservationHistory(Guest guest) {
     List<Book> books = guest.getBooks();
+    List<Book> resultBooks = new ArrayList<>();
+    for (Book book : books) {
+      if(book.getStatus() != BookStatus.CANCEL) {
+        resultBooks.add(book);
+      }
+    }
+    findHistoryAll(resultBooks);
+    findHistoryReservation(resultBooks);
+    findHistoryComplete(resultBooks);
+  }
+
+  private void findHistoryReservation(List<Book> resultBooks) {
+
+    List<Book> reservationBooks = new ArrayList<>();
+
+    for (Book resultBook : resultBooks) {
+      if(resultBook.getStatus() == BookStatus.RESERVATION) {
+        reservationBooks.add(resultBook);
+      }
+    }
+
+    if(!(reservationBooks.isEmpty())) {
+      //전체
+      System.out.println("\n================ [예약 조회] ================");
+
+      System.out.println("\t\t숙소명\t\t체크인\t\t\t\t\t체크아웃\t\t\t\t\t요금");
+      int index = 1;
+      for (Book book : reservationBooks) {
+          System.out.print(index + "\t\t"
+                  + book.getHouseName() + "\t\t"
+                  + book.getCheckInDate() + "\t\t"
+                  + book.getCheckOutDate() + "\t\t"
+                  + Math.round(book.getPrice()) + "원\n");
+          index++;
+      }
+    }
+    else {
+      System.out.println("\n예약한 숙박이 없습니다.");
+    }
+  }
+
+  private void findHistoryComplete(List<Book> resultBooks) {
+    List<Book> completeBooks = new ArrayList<>();
+
+    for (Book resultBook : resultBooks) {
+      if(resultBook.getStatus() == COMPLETE) {
+        completeBooks.add(resultBook);
+      }
+    }
+
+    if(!(completeBooks.isEmpty())) {
+      //전체
+      System.out.println();
+      System.out.println("============ [숙박 완료 리스트] ============");
+
+      System.out.println("\t\t숙소명\t\t체크인\t\t\t\t\t체크아웃\t\t\t\t\t요금\t\t\t\t후기");
+      int index = 1;
+      for (Book book : completeBooks) {
+        System.out.print(index + "\t\t"
+                + book.getHouseName() + "\t\t"
+                + book.getCheckInDate() + "\t\t"
+                + book.getCheckOutDate() + "\t\t"
+                + Math.round(book.getPrice()) + "원\t\t");
+        if(book.getReview() == null) {
+          System.out.println("X");
+        }
+        else {
+          System.out.println("O");
+        }
+        index++;
+      }
+    }
+    else {
+      System.out.println("\n완료한 숙박이 없습니다.");
+    }
+  }
+
+  private void findHistoryAll(List<Book> resultBooks) {
+    if(!(resultBooks.isEmpty())) {
+      //전체
+      System.out.println("\n===================== [전체] ======================");
+
+      System.out.println("\t\t숙소명\t\t체크인\t\t\t\t\t체크아웃\t\t\t\t\t요금\t\t\t\t후기");
+      int index = 1;
+      for (Book book : resultBooks) {
+        if(book.getStatus() == BookStatus.RESERVATION) {
+          System.out.print(index + "\t\t"
+                  + book.getHouseName() + "\t\t"
+                  + book.getCheckInDate() + "\t\t"
+                  + book.getCheckOutDate() + "\t\t"
+                  + Math.round(book.getPrice()) + "원\t\t");
+          System.out.println();
+        }
+        else {
+          System.out.print(index + "\t\t"
+                  + book.getHouseName() + "\t\t"
+                  + book.getCheckInDate() + "\t\t"
+                  + book.getCheckOutDate() + "\t\t"
+                  + Math.round(book.getPrice()) + "원\t\t");
+          if(book.getReview() == null) {
+            System.out.println("X");
+          }
+          else {
+            System.out.println("O");
+          }
+        }
+        index++;
+      }
+    }
+    else {
+      System.out.println("\n조회할 숙박이 없습니다.");
+    }
+  }
+
+
+  private double getTotalPrice(House house, int checkIn, int checkOut) {
+    double totalPrice = 0;
+
+    List<DateHouse> dateHouses = house.getDateHouses(checkIn, checkOut);
+    for (DateHouse dateHouse : dateHouses) {
+      totalPrice += dateHouse.getDateCharge();
+    }
+
+    return totalPrice;
 
   }
 
+  public void addComments(Book book, StarScore starScore, String comments) {
+    new Review(book, starScore, comments);
+  }
 }
+

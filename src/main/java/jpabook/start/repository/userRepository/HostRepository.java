@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 
 @Repository
@@ -24,9 +25,16 @@ public class HostRepository {
   }
 
   public DateHouse getDateHouseByDate(House house, int date) {
-    return em.createQuery("select d from DateHouse d join fetch d.house where d.houseDate = :date and d.house = :house", DateHouse.class)
+//  public List<DateHouse> getDateHouseByDate(int date) {
+    return em.createQuery("select d from DateHouse d where d.houseDate = :date and d.house = :house", DateHouse.class)
             .setParameter("date", date)
             .setParameter("house", house)
             .getSingleResult();
+
+//    DateHouse singleResult = em.createQuery("select d from DateHouse d join fetch d.house h where d.houseDate = :date and h = :house", DateHouse.class)
+//            .setParameter("date", date)
+//            .setParameter("house", house)
+//            .getSingleResult();
+
   }
 }

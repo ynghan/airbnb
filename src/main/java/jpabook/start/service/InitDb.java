@@ -1,16 +1,17 @@
 package jpabook.start.service;
 
 import jpabook.start.domain.booking.Book;
+import jpabook.start.domain.booking.BookStatus;
 import jpabook.start.domain.house.Address;
 import jpabook.start.domain.house.House;
 import jpabook.start.domain.house.HouseType;
 import jpabook.start.domain.house.SaleStatus;
+import jpabook.start.domain.review.StarScore;
 import jpabook.start.domain.user.Guest;
 import jpabook.start.domain.user.Host;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -20,7 +21,7 @@ public class InitDb {
 
 
   public InitDb(EntityManager em) {
-    InitService initService = new InitService(em);
+    new InitService(em);
   }
 
   @Component
@@ -79,14 +80,16 @@ public class InitDb {
       House GUMI_HOTEL = hostService.registHouse(host1, address1, 250000, "구미호텔", 5, 5, 1, HouseType.ENTIRESPACE, "넓고 쾌적합니다.");
       House DAEGU_HOTEL = hostService.registHouse(host2, address2, 300000, "대구호텔", 10, 10, 2, HouseType.ENTIRESPACE, "바베큐 장비와 조식을 제공합니다.");
       House BUSAN_HOTEL = hostService.registHouse(host3, address3, 350000, "부산호텔", 15, 15, 3, HouseType.PARTSPACE, "바다 풍경을 즐길 수 있습니다.");
+      System.out.println();
+
 
       /**
-       * 2) 호스트는 특정 기간에 정량 할인이나 정률 할인을 적용할 수 있다
+       * 2) 호스트는 특정 기간에 정량 할인이나 정률 할인을 적용할 수 있다.
        */
-      hostService.applyDiscountPolicy(GUMI_HOTEL,20, 21, SaleStatus.FIX);
+      hostService.applyDiscountPolicy(GUMI_HOTEL,22, 23, SaleStatus.FIX);
       hostService.applyDiscountPolicy(DAEGU_HOTEL,22, 23, SaleStatus.QUANTITY);
       hostService.applyDiscountPolicy(BUSAN_HOTEL,24, 24, SaleStatus.QUANTITY);
-
+      System.out.println();
 
 //      List<House> houses = guestService.findHouse(22, 25);
 //      guestService.sortByPrice(houses, 22, 25);
@@ -104,20 +107,26 @@ public class InitDb {
       /**
        * 4) 게스트는 선택한 숙소의 상세 정보를 조회할 수 있다.
        */
-      House findHouse = guestService.getDetailHouse("부산호텔");
+      House findHouse1 = guestService.getDetailHouse("부산호텔");
+      House findHouse2 = guestService.getDetailHouse("대구호텔");
+      House findHouse3 = guestService.getDetailHouse("구미호텔");
 
       /**
        * 5) 체크인, 체크아웃 날짜와 인원을 입력하여 예약을 진행한다.
        */
-      Book book = guestService.bookHouse(guest1, findHouse, 8, 24, 26);
+      Book book1 = guestService.bookHouse(guest1, findHouse1, 8, 24, 26);
+      Book book2 = guestService.bookHouse(guest1, findHouse2, 6, 22, 24);
+      Book book3 = guestService.bookHouse(guest1, findHouse3, 4, 26, 28);
 
       guestService.getDetailHouse("부산호텔");
+      guestService.getDetailHouse("대구호텔");
+      guestService.getDetailHouse("구미호텔");
 
 
       /**
        * 6) 게스트는 예약한 숙소를 취소할 수 있다.
        */
-      guestService.bookCancel(book);
+      guestService.bookCancel(book1);
 
 
 
@@ -126,18 +135,22 @@ public class InitDb {
        *    해당 리스트는 날짜 기준 내림차순으로 정렬
        */
       guestService.reservationHistory(guest1);
-//      guestService.ReservationHistory(체크아웃이 완료된 숙소);
-//      guestService.ReservationHistory(체크인이 예정인 숙소);
-
 
 
       /**
        * 8) 게스트는 체크아웃이 완료된 숙소에 별점(1~5)과 후기를 작성할 수 있다.
        */
+      book2.setStatus(BookStatus.COMPLETE);
+      guestService.addComments(book2, StarScore.FIVE, "시설이 정말 좋았다.");
+
+      guestService.getDetailHouse("대구호텔");
+
+      guestService.reservationHistory(guest1);
 
       /**
        * 9) 호스트는 지정한 달의 매출을 확인할 수 있다.
        */
+      
 
       /**
        * 10) 상속 관계, 값 타입, MappedSuperclass 를 반드시 적용해야 하며 적용한 코드를 보이고 설명

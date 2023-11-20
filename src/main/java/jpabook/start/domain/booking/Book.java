@@ -25,11 +25,29 @@ public class Book {
   @Column(name = "BOOK_ID")
   private Long id;
 
+  //예약 인원
   private int peopleNum;
 
+  //예약 정보
   private String reserveInfo;
 
+  //숙소 이름
+  private String houseName;
+
+  //숙소 타입
   private HouseType houseType;
+
+  //요금
+  private double price;
+
+  //체크인
+  private LocalDateTime checkInDate;
+
+  //체크아웃
+  private LocalDateTime checkOutDate;
+
+  @Enumerated(EnumType.STRING)
+  private BookStatus status;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "GUEST_ID")
@@ -41,17 +59,9 @@ public class Book {
   @OneToOne(mappedBy = "book", fetch = FetchType.LAZY)
   private Review review;
 
-  @Enumerated(EnumType.STRING)
-  private BookStatus status;
-
   //연관관계 메서드
   public void setGuest(Guest guest) {
     this.guest = guest;
     guest.getBooks().add(this);
-  }
-
-  public void addDateHouse(DateHouse dateHouse) {
-    dateHouses.add(dateHouse);
-    dateHouse.setBook(this);
   }
 }
