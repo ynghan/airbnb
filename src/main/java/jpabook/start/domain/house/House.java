@@ -1,6 +1,7 @@
 package jpabook.start.domain.house;
 
 import jpabook.start.domain.amentity.Amenity;
+import jpabook.start.domain.review.Review;
 import jpabook.start.domain.user.Host;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

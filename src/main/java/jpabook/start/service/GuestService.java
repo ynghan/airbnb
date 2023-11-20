@@ -27,42 +27,64 @@ public class GuestService {
     guestRepository.save(guest);
   }
 
-  //수용인원으로 조회
-  public void readByCapacity(int capacity) {
-    List<House> byCapacityHouses = houseRepository.findByCapacity(capacity);
-    System.out.println("===========" + capacity + "명 이상 수용 가능한 숙소 ============");
-    for (House byCapacityHouse : byCapacityHouses) {
-      System.out.println(byCapacityHouse.getName());
-    }
-    System.out.println("========================================");
-  }
-  //숙소 타입으로 조회
-  public void readByHouseByType(HouseType houseType) {
-    List<House> byTypeHouses = houseRepository.findByType(houseType);
-    if(houseType == HouseType.ENTIRESPACE) {
-      System.out.println("============== 전체공간 ================");
-    } else if (houseType == HouseType.PARTSPACE){
-      System.out.println("============== 부분공간 ================");
-    }
-    for (House byTypeHouse : byTypeHouses) {
-      System.out.println(byTypeHouse.getName());
-    }
-    System.out.println("=======================================");
+  /**
+   * 검사 항목 3) 게스트는 조건에 맞는 숙소를 조회할 수 있다. (체크인 날짜, 체크아웃 날짜, 인원, 숙소 타입)
+   * findHouse(checkInDate, checkOutDate, 5, houseType)
+   * findHouse(checkInDate, checkOutDate, null, null)
+   * findHouse(checkInDate, checkOutDate, 7, null)
+   */
 
-  }
-  //체크인 체크아웃 날짜로 조회
-  public void readByDateRange(int checkIn, int checkOut) {
+  public void findHouse(int checkIn, int checkOut, int capacity, HouseType houseType) {
     List<House> findHouses = houseRepository.findByDateRange(checkIn, checkOut);
     System.out.println("============= " + checkIn + "일 부터 " + checkOut + "일 까지 예약 가능한 숙소 " + "================");
     for (House findHouse : findHouses) {
-      System.out.println(findHouse.getName());
+      if(findHouse.getCapacity() >= capacity && findHouse.getHouseType() == houseType) {
+        System.out.println(findHouse);
+      }
     }
     System.out.println("======================================================================");
   }
 
+  public void findHouse(int checkIn,int checkOut, int capacity) {
+    List<House> findHouses = houseRepository.findByDateRange(checkIn, checkOut);
+    System.out.println("============= " + checkIn + "일 부터 " + checkOut + "일 까지 예약 가능한 숙소 " + "================");
+    for (House findHouse : findHouses) {
+      if(findHouse.getCapacity() >= capacity) {
+        System.out.println(findHouse.getName());
+      }
+    }
+    System.out.println("======================================================================");
+  }
+
+  public void findHouse(int checkIn, int checkOut) {
+    List<House> findHouses = houseRepository.findByDateRange(checkIn, checkOut);
+    System.out.println("============= " + checkIn + "일 부터 " + checkOut + "일 까지 예약 가능한 숙소 " + "================");
+    for (House findHouse : findHouses) {
+      System.out.println(findHouse.getHouseType() + ", " + findHouse.getName() + ", " + findHouse.getCharge() * (checkOut - checkIn + 1));
+    }
+    System.out.println("======================================================================");
+  }
+
+  /**
+   * 검색된 숙소 리스트는 가격(총가격), 별점 등의 기준으로 내림차순 정렬이 가능하다.
+   */
+  public void sortByPrice(List<House> houses, int totalPrice) {
+
+  }
+  public void sortByStarPoint(List<House> houses) {
+
+  }
+
+  /**
+   * 검색 조건에 맞는 숙소는 (숙소 유형, 이름, 총가격, 평균 별점) 정보를 보여준다.
+   */
+  public void sortByStarPoint() {
+
+  }
 
 
 
+  //==================================================================================================================
 
   public House getDetailHouse(String houseName) {
     House house = houseRepository.findByName(houseName);

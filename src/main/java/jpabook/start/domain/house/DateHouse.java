@@ -39,7 +39,6 @@ public class DateHouse {
   private House house;
 
   public DateHouse(House house, Month monthValue, int date) {
-    this.status = SaleStatus.QUANTITY;
     this.houseMonth = monthValue;
     this.houseDate = date;
     this.dateCharge = house.getCharge();

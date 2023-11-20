@@ -1,5 +1,8 @@
 package jpabook.start.domain.review;
 
+import jpabook.start.domain.booking.Book;
+import jpabook.start.domain.house.House;
+import jpabook.start.domain.user.Guest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +21,10 @@ public class Review {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "REVIEW_ID")
   private Long id;
+
+  @Enumerated(EnumType.STRING)
+  private StarScore starScore;
+
+  @OneToOne()
+  private Book book;
 }

@@ -21,7 +21,10 @@ public class Host {
 
   private int age;
 
-  private String gender;
+  public Host(String name, int age) {
+    this.name = name;
+    this.age = age;
+  }
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "HOUSE_ID")
