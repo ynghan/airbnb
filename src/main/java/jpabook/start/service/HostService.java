@@ -37,7 +37,7 @@ public class HostService {
     for(int i = startDate; i <= endDate; i++) {
       DateHouse findDateHouse = hostRepository.getDateHouseByDate(house, i);
       findDateHouse.setStatus(status);
-      System.out.print(findDateHouse.getHouseDate() + " ");
+      System.out.print(house.getName() + "(" + findDateHouse.getHouseDate() + ")일: ");
       calPrice(findDateHouse);
     }
   }
@@ -48,11 +48,12 @@ public class HostService {
     if(findStatus.equals(SaleStatus.QUANTITY)) {
       double v = datehouse.getDateCharge() * 0.85;
       datehouse.setDateCharge(v);
-      System.out.println(v);
+      System.out.println((int) v+ "원");
     } else if(findStatus.equals(SaleStatus.FIX)) {
       double v = datehouse.getDateCharge() - 5000;
+
       datehouse.setDateCharge(v);
-      System.out.println(v);
+      System.out.println((int) v + "원");
     }
   }
 

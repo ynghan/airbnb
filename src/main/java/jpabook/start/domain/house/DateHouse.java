@@ -25,6 +25,9 @@ public class DateHouse {
 
   private double dateCharge;
 
+  private int roomCount;
+
+  @Enumerated(EnumType.STRING)
   private ReservationState reservationState;
 
   @Enumerated(EnumType.STRING)
@@ -41,6 +44,7 @@ public class DateHouse {
   public DateHouse(House house, Month monthValue, int date) {
     this.houseMonth = monthValue;
     this.houseDate = date;
+    this.roomCount = house.getRoomCount();
     this.dateCharge = house.getCharge();
     this.reservationState = ReservationState.UNRESERVE;
   }

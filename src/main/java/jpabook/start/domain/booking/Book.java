@@ -1,6 +1,8 @@
 package jpabook.start.domain.booking;
 
 import jpabook.start.domain.house.DateHouse;
+import jpabook.start.domain.house.HouseType;
+import jpabook.start.domain.review.Review;
 import jpabook.start.domain.user.Guest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +25,21 @@ public class Book {
   @Column(name = "BOOK_ID")
   private Long id;
 
+  private int peopleNum;
+
+  private String reserveInfo;
+
+  private HouseType houseType;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "GUEST_ID")
   private Guest guest;
 
   @OneToMany(mappedBy = "book")
   private List<DateHouse> dateHouses = new ArrayList<>();
+
+  @OneToOne(mappedBy = "book", fetch = FetchType.LAZY)
+  private Review review;
 
   @Enumerated(EnumType.STRING)
   private BookStatus status;

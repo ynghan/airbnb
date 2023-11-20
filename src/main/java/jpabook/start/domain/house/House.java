@@ -1,6 +1,7 @@
 package jpabook.start.domain.house;
 
 import jpabook.start.domain.amentity.Amenity;
+import jpabook.start.domain.booking.Book;
 import jpabook.start.domain.review.Review;
 import jpabook.start.domain.user.Host;
 import lombok.Getter;
@@ -50,6 +51,8 @@ public class House {
 
   private String introduction;
 
+  private double starPoint;
+
   @Enumerated(EnumType.STRING)
   private HouseType houseType;
 
@@ -85,13 +88,17 @@ public class House {
     this.introduction = introduction;
 
     //현재 일 ~ 31일 DateHouse 클래스 생성
-    createDateHouse();
+    Month currentMonth = registerDate.getMonth();
+    int currMonthInteger = currentMonth.getValue();
+    int nextMonthInteger = (currMonthInteger + 1) % 12;
+//    Month nextMonth = Month.of(nextMonthInteger);
+    createDateHouse(currentMonth);
+//    createDateHouse(nextMonth);
 
   }
   //House 생성 시점에 모든 날짜에 대한 DateHouse를 생성한다.
-  public void createDateHouse() {
+  public void createDateHouse(Month monthValue) {
     //월 저장
-    Month monthValue = this.registerDate.getMonth();
     YearMonth yearMonth = YearMonth.of(2023, monthValue);
     int lengthOfMonth = yearMonth.lengthOfMonth();
     int dayOfMonth = this.registerDate.getDayOfMonth();
@@ -102,5 +109,32 @@ public class House {
       dateHouse.setHouse(this);
       this.dateHouses.add(dateHouse);
     }
+  }
+
+  public List<DateHouse> getDateHouses(int checkIn, int checkOut) {
+    List<DateHouse> dateHouses = this.getDateHouses();
+    List<DateHouse> returnDateHouse = new ArrayList<>();
+    for (DateHouse dateHouse : dateHouses) {
+      if(dateHouse.getHouseDate() >= checkIn && dateHouse.getHouseDate() <= checkOut) {
+        returnDateHouse.add(dateHouse);
+      }
+    }
+    return returnDateHouse;
+  }
+
+  public List<Review> getAllReview() {
+    List<DateHouse> dateHouses = this.getDateHouses();
+    List<Review> reviews = new ArrayList<>();
+    for (DateHouse dateHouse : dateHouses) {
+      Book book = dateHouse.getBook();
+      if (book != null) {
+        Review review = book.getReview();
+
+        if (review != null) {
+          reviews.add(review);
+        }
+      }
+    }
+    return reviews;
   }
 }

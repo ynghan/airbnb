@@ -25,6 +25,10 @@ public class Review {
   @Enumerated(EnumType.STRING)
   private StarScore starScore;
 
-  @OneToOne()
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "BOOK_ID")
   private Book book;
+
+  private String contents;
+
 }
