@@ -7,10 +7,8 @@ import jpabook.start.domain.house.House;
 import jpabook.start.domain.house.HouseType;
 import jpabook.start.domain.house.ReservationState;
 import jpabook.start.domain.review.Review;
-import jpabook.start.domain.review.StarScore;
 import jpabook.start.domain.user.Guest;
 import jpabook.start.repository.HouseRepository;
-import jpabook.start.repository.userRepository.GuestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -185,17 +183,27 @@ public class GuestService {
 
 
     //2. 숙소의 모든 별점과 리뷰
-    System.out.println("별점 : " + house.getStarPoint());
-    Set<Review> allReview = house.getAllReview();
-    System.out.println("----------- [리뷰 내용] -----------");
-    if(allReview.isEmpty()) {
-      System.out.println("등록된 리뷰가 없습니다.");
-      System.out.println();
-    } else {
-      for (Review review : allReview) {
-        System.out.println(review.getComments());
-      }
-    }
+    //모든 별점
+    System.out.println("----------- [전체 별점] -----------");
+    houseRepository.getAllStarPoint(house);
+    System.out.println();
+    //모든 리뷰
+    System.out.println("----------- [전체 리뷰] -----------");
+    houseRepository.getAllContents(house);
+    System.out.println();
+
+
+//    System.out.println("별점 : " + house.getStarPoint() + "점");
+//    Set<Review> allReview = house.getAllReview();
+//    System.out.println("----------- [리뷰 내용] -----------");
+//    if(allReview.isEmpty()) {
+//      System.out.println("등록된 리뷰가 없습니다.");
+//      System.out.println();
+//    } else {
+//      for (Review review : allReview) {
+//        System.out.println(review.getComments());
+//      }
+//    }
 
 
 
@@ -327,6 +335,7 @@ public class GuestService {
         List<DateHouse> dateHouses = house.getDateHouses(checkinDate, checkoutDate);
         for (DateHouse dateHouse : dateHouses) {
           book.getDateHouses().add(dateHouse);
+          dateHouse.setBook(book);
           dateHouse.setReservationState(ReservationState.RESERVE);
         }
       }
@@ -338,6 +347,7 @@ public class GuestService {
         for (DateHouse dateHouse : dateHouses) {
           if(dateHouse.getRoomCount() >= capacity) {
             book.getDateHouses().add(dateHouse);
+            dateHouse.setBook(book);
             int remainRoomCount = dateHouse.getRoomCount() - capacity;
             dateHouse.setRoomCount(remainRoomCount);
           }
@@ -505,9 +515,8 @@ public class GuestService {
   public void addComments(Review review) {
     review.getBook().setStatus(BookStatus.COMPLETE);
     System.out.println();
-    System.out.println(review.getBook().getHouseName() + "에 대한 후기를 등록합니다.");
+    System.out.println("======= " + review.getBook().getHouseName() + "에 대한 후기를 등록합니다. =======");
     System.out.println(">> " + review.getComments());
-//    review.getBook().setReview(review);
     review.getBook().getDateHouses().get(0).getHouse().getHost().setTotalMonthAmount(review.getBook().getDateHouses().get(0).getHouse().getHost().getTotalMonthAmount() + review.getBook().getPrice());
 
   }

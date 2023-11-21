@@ -10,23 +10,15 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Host {
+public class Host extends BaseUser {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "HOST_ID")
   private Long id;
 
-  private String name;
-
-  private int age;
-
   private double totalMonthAmount;
 
-  public Host(String name, int age) {
-    this.name = name;
-    this.age = age;
-  }
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "HOUSE_ID")
@@ -36,6 +28,11 @@ public class Host {
   public void registHouse(House house) {
     this.house = house;
     house.setHost(this);
+  }
+
+  public Host(String name, int age) {
+    super.setName(name);
+    super.setAge(age);
   }
 
 }

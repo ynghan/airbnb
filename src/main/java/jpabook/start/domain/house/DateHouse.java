@@ -52,7 +52,6 @@ public class DateHouse {
   //== 연관관계 메서드 ==//
   public void setBook(Book book) {
     this.book = book;
-    book.getDateHouses().add(this);
   }
 
 }

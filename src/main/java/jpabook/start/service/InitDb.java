@@ -143,7 +143,6 @@ public class InitDb {
        */
       Review review = new Review(book2, StarScore.FIVE, "시설이 정말 좋았다.");
       guestService.addComments(review);
-//      System.out.println(book2.getReview());
       guestService.reservationHistory(guest1);
 
       guestService.getDetailHouse("대구호텔");
@@ -157,14 +156,6 @@ public class InitDb {
       /**
        * 10) 상속 관계, 값 타입, MappedSuperclass 를 반드시 적용해야 하며 적용한 코드를 보이고 설명
        */
-
-
-
-
-
-
-
-
 
     }
   }

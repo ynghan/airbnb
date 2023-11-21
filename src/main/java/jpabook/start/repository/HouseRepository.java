@@ -1,8 +1,10 @@
 package jpabook.start.repository;
 
+import jpabook.start.domain.booking.Book;
 import jpabook.start.domain.house.DateHouse;
 import jpabook.start.domain.house.House;
 import jpabook.start.domain.house.HouseType;
+import jpabook.start.domain.review.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +12,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -77,6 +81,41 @@ public class HouseRepository {
 
     return houses;
   }
+
+  public void getAllStarPoint(House house) {
+    Set<Review> reviews = getAllReviews(house);
+
+    for (Review review : reviews) {
+      System.out.print(review.getBook().getGuest().getName() + " : ");
+      System.out.println(review.getStarScore().getStarPoint());
+    }
+  }
+
+  public void getAllContents(House house) {
+    Set<Review> reviews = getAllReviews(house);
+
+    for (Review review : reviews) {
+      System.out.print(review.getBook().getGuest().getName() + " : ");
+      System.out.println(review.getComments());
+    }
+  }
+
+  private static Set<Review> getAllReviews(House house) {
+    List<DateHouse> dateHouses = house.getDateHouses();
+    Set<Review> reviews = new HashSet<>();
+    for (DateHouse dateHouse : dateHouses) {
+      Book book = dateHouse.getBook();
+      if(book != null) {
+        Review review = book.getReview();
+        if(review != null) {
+          reviews.add(review);
+        }
+      }
+    }
+    return reviews;
+  }
+
+
 
 
 }

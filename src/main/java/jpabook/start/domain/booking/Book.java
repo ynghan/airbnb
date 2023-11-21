@@ -57,7 +57,7 @@ public class Book {
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
   private List<DateHouse> dateHouses = new ArrayList<>();
 
-  @OneToOne(mappedBy = "book", fetch = FetchType.LAZY)
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JoinColumn(name = "REVIEW_ID")
   private Review review;
 

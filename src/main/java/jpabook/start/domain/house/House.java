@@ -2,6 +2,7 @@ package jpabook.start.domain.house;
 
 import jpabook.start.domain.amentity.Amenity;
 import jpabook.start.domain.booking.Book;
+import jpabook.start.domain.booking.BookStatus;
 import jpabook.start.domain.review.Review;
 import jpabook.start.domain.user.Host;
 import lombok.Getter;
@@ -57,17 +58,6 @@ public class House {
   @Enumerated(EnumType.STRING)
   private HouseType houseType;
 
-  //== 연관관계 메서드 ==//
-  public void addAmenity(Amenity amenity) {
-    amenitys.add(amenity);
-    amenity.setHouse(this);
-  }
-
-
-  public void addDateHouse(DateHouse dateHouse) {
-    dateHouses.add(dateHouse);
-    dateHouse.setHouse(this);
-  }
 
   //== 생성 메서드 ==//
   public House(int charge, Address address, String name, int capacity, int roomCount, int bathroomCount, HouseType houseType, String introduction) {
@@ -117,41 +107,26 @@ public class House {
     return returnDateHouse;
   }
 
-  public Set<Review> getAllReview() {
+  public double getStarPoint() {
     List<DateHouse> dateHouses = this.getDateHouses();
-    Set<Review> reviews = new HashSet<>();
-    for (DateHouse dateHouse : dateHouses) {
-      Book book = dateHouse.getBook();
-      if (book != null) {
-        Review review = book.getReview();
-        if (review != null) {
-          reviews.add(review);
-        }
-      }
-    }
-
-    return reviews;
-  }
-
-  public void setStarPoint() {
-    List<DateHouse> dateHouses = this.getDateHouses();
-    Set<Review> reviews = new HashSet<>();
-    for (DateHouse dateHouse : dateHouses) {
-      Book book = dateHouse.getBook();
-      if (book != null) {
-        Review review = book.getReview();
-        if (review != null) {
-          reviews.add(review);
-        }
-      }
-    }
+    int count = 0;
     double total = 0;
-    for (Review review : reviews) {
-      total += review.getStarScore().getStarPoint();
+    for (DateHouse dateHouse : dateHouses) {
+      Book book = dateHouse.getBook();
+      if(book != null) {
+        Review review = book.getReview();
+        if(review != null) {
+          count++;
+          total += review.getStarScore().getStarPoint();
+        }
+      }
     }
-    total /= reviews.size();
-    this.setStarPoint(total);
+    if(count != 0) {
+      return total/count;
+    }
+    else {
+      return 0;
+    }
   }
-
 
 }

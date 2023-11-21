@@ -27,14 +27,13 @@ public class Review {
   @Enumerated(EnumType.STRING)
   private StarScore starScore;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "BOOK_ID")
+  @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
   private Book book;
 
 
   public Review(Book book, StarScore starScore, String comments) {
     this.book = book;
-//    book.setReview(this);
+    book.setReview(this);
     this.starScore = starScore;
     this.comments = comments;
   }

@@ -14,7 +14,7 @@ import java.util.List;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Guest {
+public class Guest extends BaseUser {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "GUEST_ID")
@@ -23,13 +23,9 @@ public class Guest {
   @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL)
   private List<Book> books = new ArrayList<>();
 
-  private String name;
-
-  private int age;
 
   public Guest(String name, int age) {
-    this.name = name;
-    this.age = age;
+    super.setName(name);
+    super.setAge(age);
   }
-
 }
