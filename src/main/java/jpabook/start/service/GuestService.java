@@ -426,12 +426,10 @@ public class GuestService {
         completeBooks.add(resultBook);
       }
     }
-
+    //전체
+    System.out.println();
+    System.out.println("============ [숙박 완료 리스트] ============");
     if(!(completeBooks.isEmpty())) {
-      //전체
-      System.out.println();
-      System.out.println("============ [숙박 완료 리스트] ============");
-
       System.out.println("\t\t숙소명\t\t체크인\t\t\t\t\t체크아웃\t\t\t\t\t요금\t\t\t\t후기");
       int index = 1;
       for (Book book : completeBooks) {
@@ -450,7 +448,7 @@ public class GuestService {
       }
     }
     else {
-      System.out.println("\n완료한 숙박이 없습니다.");
+      System.out.println("완료한 숙박이 없습니다.");
     }
   }
 
@@ -505,7 +503,13 @@ public class GuestService {
   }
 
   public void addComments(Book book, StarScore starScore, String comments) {
-    new Review(book, starScore, comments);
+    book.setStatus(BookStatus.COMPLETE);
+    System.out.println();
+    System.out.println(book.getHouseName() + "에 대한 후기를 등록합니다.");
+    System.out.println(">> " + comments);
+    Review review = new Review(book, starScore, comments);
+    book.setReview(review);
+    book.getDateHouses().get(0).getHouse().getHost().setTotalMonthAmount(book.getDateHouses().get(0).getHouse().getHost().getTotalMonthAmount() + book.getPrice());
   }
 }
 

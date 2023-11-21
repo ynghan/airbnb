@@ -59,4 +59,9 @@ public class HostService {
     return datehouse.getDateCharge();
   }
 
+  public void readMonthAmount(Host host1) {
+    System.out.println();
+    System.out.println("11월 총 매출 : " + Math.round(host1.getTotalMonthAmount()) + "원");
+    System.out.println();
+  }
 }

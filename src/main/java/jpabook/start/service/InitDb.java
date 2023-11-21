@@ -140,17 +140,17 @@ public class InitDb {
       /**
        * 8) 게스트는 체크아웃이 완료된 숙소에 별점(1~5)과 후기를 작성할 수 있다.
        */
-      book2.setStatus(BookStatus.COMPLETE);
       guestService.addComments(book2, StarScore.FIVE, "시설이 정말 좋았다.");
-
-      guestService.getDetailHouse("대구호텔");
 
       guestService.reservationHistory(guest1);
 
+      guestService.getDetailHouse("대구호텔");
+
       /**
        * 9) 호스트는 지정한 달의 매출을 확인할 수 있다.
+       * 후기 등록하면 금액만큼 호스트에게 돈을 지불
        */
-      
+      hostService.readMonthAmount(host2);
 
       /**
        * 10) 상속 관계, 값 타입, MappedSuperclass 를 반드시 적용해야 하며 적용한 코드를 보이고 설명

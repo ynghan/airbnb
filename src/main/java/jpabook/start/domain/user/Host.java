@@ -21,6 +21,8 @@ public class Host {
 
   private int age;
 
+  private double totalMonthAmount;
+
   public Host(String name, int age) {
     this.name = name;
     this.age = age;
