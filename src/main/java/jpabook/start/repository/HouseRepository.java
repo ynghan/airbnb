@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +35,15 @@ public class HouseRepository {
   }
 
   public House findByName(String name) {
-    return em.createQuery("select h from House h where h.name = :name", House.class)
-            .setParameter("name", name).getSingleResult();
+    try {
+      return em.createQuery("select h from House h where h.name = :name", House.class)
+              .setParameter("name", name)
+              .getSingleResult();
+    } catch (Exception e) {
+      // 결과가 없는 경우 처리
+      System.out.println("결과가 없는 경우");
+    }
+    return new House();
   }
 
 
@@ -45,6 +54,10 @@ public class HouseRepository {
   }
 
   public List<House> findByDateRange(int checkIn, int checkOut) {
+//    List<House> houses = em.createQuery("select h from House h join fetch h.dateHouses d where d.houseDate >= :checkIn and d.houseDate <= :checkOut", House.class)
+//            .setParameter("checkIn", checkIn)
+//            .setParameter("checkOut", checkOut)
+//            .getResultList();
     List<House> houses = em.createQuery("select h from House h", House.class).getResultList();
     int count;
     List<House> returnHouse = new ArrayList<>();
@@ -62,7 +75,7 @@ public class HouseRepository {
       }
     }
 
-    return returnHouse;
+    return houses;
   }
 
 

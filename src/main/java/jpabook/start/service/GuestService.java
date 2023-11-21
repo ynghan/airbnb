@@ -384,8 +384,8 @@ public class GuestService {
       }
     }
     findHistoryAll(resultBooks);
-    findHistoryReservation(resultBooks);
-    findHistoryComplete(resultBooks);
+//    findHistoryReservation(resultBooks);
+//    findHistoryComplete(resultBooks);
   }
 
   private void findHistoryReservation(List<Book> resultBooks) {
@@ -502,14 +502,14 @@ public class GuestService {
 
   }
 
-  public void addComments(Book book, StarScore starScore, String comments) {
-    book.setStatus(BookStatus.COMPLETE);
+  public void addComments(Review review) {
+    review.getBook().setStatus(BookStatus.COMPLETE);
     System.out.println();
-    System.out.println(book.getHouseName() + "에 대한 후기를 등록합니다.");
-    System.out.println(">> " + comments);
-    Review review = new Review(book, starScore, comments);
-    book.setReview(review);
-    book.getDateHouses().get(0).getHouse().getHost().setTotalMonthAmount(book.getDateHouses().get(0).getHouse().getHost().getTotalMonthAmount() + book.getPrice());
+    System.out.println(review.getBook().getHouseName() + "에 대한 후기를 등록합니다.");
+    System.out.println(">> " + review.getComments());
+//    review.getBook().setReview(review);
+    review.getBook().getDateHouses().get(0).getHouse().getHost().setTotalMonthAmount(review.getBook().getDateHouses().get(0).getHouse().getHost().getTotalMonthAmount() + review.getBook().getPrice());
+
   }
 }
 

@@ -35,6 +35,7 @@ public class Book {
   private String houseName;
 
   //숙소 타입
+  @Enumerated(EnumType.STRING)
   private HouseType houseType;
 
   //요금
@@ -53,10 +54,11 @@ public class Book {
   @JoinColumn(name = "GUEST_ID")
   private Guest guest;
 
-  @OneToMany(mappedBy = "book")
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
   private List<DateHouse> dateHouses = new ArrayList<>();
 
   @OneToOne(mappedBy = "book", fetch = FetchType.LAZY)
+  @JoinColumn(name = "REVIEW_ID")
   private Review review;
 
   //연관관계 메서드

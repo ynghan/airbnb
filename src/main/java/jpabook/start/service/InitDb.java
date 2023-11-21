@@ -6,6 +6,7 @@ import jpabook.start.domain.house.Address;
 import jpabook.start.domain.house.House;
 import jpabook.start.domain.house.HouseType;
 import jpabook.start.domain.house.SaleStatus;
+import jpabook.start.domain.review.Review;
 import jpabook.start.domain.review.StarScore;
 import jpabook.start.domain.user.Guest;
 import jpabook.start.domain.user.Host;
@@ -140,8 +141,9 @@ public class InitDb {
       /**
        * 8) 게스트는 체크아웃이 완료된 숙소에 별점(1~5)과 후기를 작성할 수 있다.
        */
-      guestService.addComments(book2, StarScore.FIVE, "시설이 정말 좋았다.");
-
+      Review review = new Review(book2, StarScore.FIVE, "시설이 정말 좋았다.");
+      guestService.addComments(review);
+//      System.out.println(book2.getReview());
       guestService.reservationHistory(guest1);
 
       guestService.getDetailHouse("대구호텔");

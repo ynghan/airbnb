@@ -34,6 +34,7 @@ public class Review {
 
   public Review(Book book, StarScore starScore, String comments) {
     this.book = book;
+//    book.setReview(this);
     this.starScore = starScore;
     this.comments = comments;
   }

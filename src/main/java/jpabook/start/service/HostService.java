@@ -3,6 +3,7 @@ package jpabook.start.service;
 
 import jpabook.start.domain.house.*;
 import jpabook.start.domain.user.Host;
+import jpabook.start.repository.HouseRepository;
 import jpabook.start.repository.userRepository.HostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,11 @@ import javax.persistence.EntityManager;
 public class HostService {
 
   private HostRepository hostRepository;
+  private HouseRepository houseRepository;
 
   public HostService(EntityManager em) {
     hostRepository = new HostRepository(em);
+    houseRepository = new HouseRepository(em);
   }
 
   public void save(Host host) {
@@ -29,6 +32,7 @@ public class HostService {
     System.out.println("========= 숙소 등록 =========");
     System.out.println(name);
     House house = new House(charge, address, name, capacity, roomCount, bathroomCount, status, introduction);
+    houseRepository.save(house);
     host.registHouse(house);
     return house;
   }
