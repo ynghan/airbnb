@@ -39,21 +39,3 @@
 * 후기 등록
   * 숙소 별 최소 3건 등록
 * 추가적으로 이후 설명한 기능 검사에 적절한 사전 데이터 준비
-
-
-### 현재 개발 사항
-
-    - 현재 호스트가 특정 기간에 특정 할일을 적용하는 기능을 수행하고 있다.
-        - 호스트가 등록한 House에 대해 12월 1일에서 31일에 대한 DateHouse를 생성하고 db에 저장하고 find할 수 있어야 한다.
-        - find 한 후 특정 날짜에 대해 DateHouse를 get하여 해당 DateHouse 객체에 특정 할인을 적용할 수 있어야 한다.
-    * 개발 순서
-    1. 등록한 House에 대해 12월 모든 날짜에 대한 DateHouse 만들기
-        - hostService.registHouse() -> new House() -> 생성되는 House 클래스에서 만들어야 함. : new DateHouse(날짜, House house)
-    2. 생성자를 만들었으니 이제 db에 저장해야 한다.
-        - House를 저장할 때 cascade로 DateHouse도 persist() 됨.
-
-
-1. Host는 House를 등록하는 날짜 이후로 예약 가능해야 한다.
-   1. House의 registerDate의 월, 일을 획득하고 해당 월의 해당 일 이후로부터 등록 가능하다.
-   2. 해당 월만 예약이 가능하다.
-   3. 해당 월에 따라 30일, 31일을 확인해야 한다.
